@@ -13,3 +13,4 @@ public class User {
     private String password;
 
     private String role; // Enum for user roles
+}
