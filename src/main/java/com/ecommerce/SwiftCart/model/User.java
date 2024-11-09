@@ -12,5 +12,5 @@ public class User {
     private String email;
     private String password;
 
-    private String role; // Enum for user roles
+    private String role;
 }
