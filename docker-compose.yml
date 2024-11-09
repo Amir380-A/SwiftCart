@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: swiftcart_db
+    environment:
+      POSTGRES_DB: springdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: yourpassword  # Change to your actual password
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: swiftcart_app
+    environment:
+      SPRING_DATASOURCE_HOST: db  # Refers to the db service defined in docker-compose
+      SPRING_DATASOURCE_DB: springdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: yourpassword  # Change to your actual password
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+volumes:
+  db_data:
