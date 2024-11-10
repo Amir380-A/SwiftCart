@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_DB: springdb
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: yourpassword  # Change to your actual password
+      POSTGRES_PASSWORD: yourpassword
     ports:
       - "5432:5432"
     volumes:
