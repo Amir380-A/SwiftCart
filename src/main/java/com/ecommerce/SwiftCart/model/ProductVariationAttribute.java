@@ -8,6 +8,30 @@ public class ProductVariationAttribute {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public ProductVariation getProductVariation() {
+        return productVariation;
+    }
+
+    public void setProductVariation(ProductVariation productVariation) {
+        this.productVariation = productVariation;
+    }
+
+    public AttributeValue getAttributeValue() {
+        return attributeValue;
+    }
+
+    public void setAttributeValue(AttributeValue attributeValue) {
+        this.attributeValue = attributeValue;
+    }
+
     @ManyToOne
     @JoinColumn(name = "product_variation_id")
     private ProductVariation productVariation;
