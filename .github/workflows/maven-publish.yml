@@ -4,9 +4,10 @@ on:
   push:
     branches:
       - main  
+      - feature/kubernetes-setup
   pull_request:
     branches:
-      - main 
+      - main    
 
 jobs:
   build:
