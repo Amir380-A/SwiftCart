@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: swiftcart-config
+data:
+  SPRING_DATASOURCE_HOST: "swiftcart-db"
+  SPRING_DATASOURCE_DB: "springdb"
+  SPRING_DATASOURCE_USERNAME: "postgres"
+  SPRING_DATASOURCE_PASSWORD: "yourpassword"
+  SPRING_REDIS_HOST: "swiftcart-redis"
+  SPRING_REDIS_PORT: "6379"
+

@@ -1,0 +1,169 @@
+# SwiftCart App Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: swiftcart-app
+  labels:
+    app: swiftcart-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: swiftcart-app
+  template:
+    metadata:
+      labels:
+        app: swiftcart-app
+    spec:
+      containers:
+      - name: swiftcart-app
+        image: amir14631/swiftcart:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_DATASOURCE_HOST
+          value: "swiftcart-db"
+        - name: SPRING_DATASOURCE_DB
+          value: "springdb"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "postgres"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "yourpassword"
+        - name: SPRING_REDIS_HOST
+          value: "swiftcart-redis"
+        - name: SPRING_REDIS_PORT
+          value: "6379"
+---
+# Postgres Database Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: swiftcart-db
+  labels:
+    app: swiftcart-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: swiftcart-db
+  template:
+    metadata:
+      labels:
+        app: swiftcart-db
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15
+        env:
+        - name: POSTGRES_DB
+          value: "springdb"
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
+          value: "yourpassword"
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: db-data
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: db-data
+        persistentVolumeClaim:
+          claimName: db-pvc
+---
+# Redis Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: swiftcart-redis
+  labels:
+    app: swiftcart-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: swiftcart-redis
+  template:
+    metadata:
+      labels:
+        app: swiftcart-redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:alpine
+        command: ["redis-server", "--appendonly", "yes"]
+        ports:
+        - containerPort: 6379
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+      volumes:
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: redis-pvc
+---
+# SwiftCart App Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: swiftcart-app
+spec:
+  selector:
+    app: swiftcart-app
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+---
+# Postgres Database Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: swiftcart-db
+spec:
+  selector:
+    app: swiftcart-db
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP
+---
+# Redis Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: swiftcart-redis
+spec:
+  selector:
+    app: swiftcart-redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+  type: ClusterIP
+---
+# Persistent Volume Claim for Postgres
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+# Persistent Volume Claim for Redis
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
